@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
-import { getMovies, Movie } from "./api/movieService";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MovieDetails from "./MovieDetails";
+import MovieList from "./MovieList";
+import NavBar from "./NavBar";
+import { getMovies } from "./api/movieService";
 import "./App.css";
+
+interface Movie {
+  _id: string;
+  title: string;
+  imageUrl: string;
+  description: string;
+  releaseDate: string;
+  rating: string;
+}
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -15,21 +28,15 @@ function App() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4 text-center mt-0">MovieHub</h1>
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {movies.map((movie) => (
-          <li key={movie._id} className="bg-white p-4 rounded shadow">
-            <img
-              src={movie.imageUrl}
-              alt={movie.title}
-              className="w-full h-64 object-cover mb-4 rounded"
-            />
-            <h2 className="text-xl font-semibold">{movie.title}</h2>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <NavBar />
+      <div className="container mx-auto p-4 pt-20">
+        <Routes>
+          <Route path="/" element={<MovieList movies={movies} />} />
+          <Route path="/movies/:id" element={<MovieDetails />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
