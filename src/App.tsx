@@ -4,6 +4,7 @@ import MovieDetails from "./MovieDetails";
 import MovieList from "./MovieList";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import Login from "./Login";
 import { getMovies } from "./api/movieService";
 
 interface Movie {
@@ -33,6 +34,7 @@ function App() {
         <NavBar />
         <div className="container mx-auto p-4 pt-20 flex-grow">
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<MovieList movies={movies} />} />
             <Route path="/movies/:id" element={<MovieDetails />} />
           </Routes>
