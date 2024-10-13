@@ -40,7 +40,7 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 ## Reporting Issues
 
-If you find a bug or have a feature request, please create an issue in the [Issue Tracker](https://github.com/your-username/MovieHub-app/issues).
+If you find a bug or have a feature request, please create an issue in the [Issue Tracker](https://github.com/gabriel-rodriguezcastellini/MovieHub-app/issues).
 
 ## Getting Help
 
