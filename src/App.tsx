@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import Login from "./Login";
 import { getMovies } from "./api/movieService";
+import ErrorBoundary from "./ErrorBoundary";
 
 interface Movie {
   _id: string;
@@ -33,11 +34,13 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <NavBar />
         <div className="container mx-auto p-4 pt-20 flex-grow">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<MovieList movies={movies} />} />
-            <Route path="/movies/:id" element={<MovieDetails />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<MovieList movies={movies} />} />
+              <Route path="/movies/:id" element={<MovieDetails />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
         <Footer />
       </div>
