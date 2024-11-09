@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MovieDetails from "./MovieDetails";
 import MovieList from "./MovieList";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Login from "./Login";
 import { getMovies } from "./api/movieService";
 import ErrorBoundary from "./ErrorBoundary";
@@ -32,7 +32,7 @@ function App() {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
-        <NavBar />
+        <Header />
         <div className="container mx-auto p-4 pt-20 flex-grow">
           <ErrorBoundary>
             <Routes>
