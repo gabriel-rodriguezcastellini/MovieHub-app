@@ -1,19 +1,50 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { headerList, tokenList } from "./consts";
 
-const Header: React.FC = () => {
+const Header = () => {
+  const navigate = useNavigate();
+
+  const path = window.location.pathname;
+
+  const handleClick = (link: string) => {
+    navigate(link);
+  };
+
+  const token = localStorage.getItem("token");
+
   return (
-    <nav className="bg-blue-500 fixed w-full top-0 z-10">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-10">
-          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-            <Link to="/" className="text-white text-base font-bold">
-              MovieHub
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <header className="top-0 flex flex-row justify-between w-full bg-gray-600 p-4">
+      <h1 className="text-2xl flex-nowrap">MovieHub - APP</h1>
+      <nav className="flex justify-end w-auto items-center">
+        <ul className="flex flex-row gap-3">
+          {token
+            ? tokenList.map((item, index) => (
+                <li
+                  className={
+                    (path === item.link ? "underline font-bold" : "") +
+                    " cursor-pointer"
+                  }
+                  key={index}
+                  onClick={() => handleClick(item.link)}
+                >
+                  {item.title}
+                </li>
+              ))
+            : headerList.map((item, index) => (
+                <li
+                  className={
+                    (path === item.link ? "underline font-bold" : "") +
+                    " cursor-pointer"
+                  }
+                  key={index}
+                  onClick={() => handleClick(item.link)}
+                >
+                  {item.title}
+                </li>
+              ))}
+        </ul>
+      </nav>
+    </header>
   );
 };
 
