@@ -1,13 +1,8 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const { VITE_API_BASE_URL } = process.env;
 
 const api = axios.create({
-  baseURL: VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 const getUserToken = async () => {
