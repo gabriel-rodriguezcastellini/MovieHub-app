@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "../../store/store";
 import { getMovies } from "../../slices/movies";
 import Card from "../../components/Card";
 import { RootState } from "../../store/store";
+import Loading from "../../components/Loading";
+import Error from "../../components/Error";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -17,13 +19,11 @@ const Home = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div className="text-center text-xl">Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
-    return (
-      <div className="text-center text-xl text-red-500">Error: {error}</div>
-    );
+    return <Error message={error} />;
   }
 
   return (

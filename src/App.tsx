@@ -8,6 +8,7 @@ import About from "./pages/About";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Movie from "./pages/Movie";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,6 +39,7 @@ function App() {
             <Route path="/login" element={<LogIn />} />
             <Route path="/about" element={<About />} />
             <Route path="/movies/:id" element={<Movie />} />
+            <Route path="/not-found" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Layout>
