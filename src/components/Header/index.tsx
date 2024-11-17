@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { headerList, tokenList } from "./consts";
+import SignOutButton from "../SignOutButton";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -42,6 +43,11 @@ const Header = () => {
                   {item.title}
                 </li>
               ))}
+          {token && (
+            <li>
+              <SignOutButton />
+            </li>
+          )}
         </ul>
       </nav>
     </header>

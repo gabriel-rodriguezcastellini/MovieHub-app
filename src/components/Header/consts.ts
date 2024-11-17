@@ -12,6 +12,14 @@ export const headerList: HeaderList[] = [
     title: "About",
     link: "/about",
   },
+  {
+    title: "Sign Up",
+    link: "/signup",
+  },
+  {
+    title: "Log In",
+    link: "/login",
+  },
 ];
 
 export const tokenList: HeaderList[] = [
@@ -20,11 +28,11 @@ export const tokenList: HeaderList[] = [
     link: "/",
   },
   {
-    title: "Movies",
-    link: "/admin/movies",
-  },
-  {
     title: "About",
     link: "/about",
+  },
+  {
+    title: "Manage",
+    link: "/manage",
   },
 ];
