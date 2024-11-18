@@ -3,6 +3,7 @@ import Header from "../Header";
 
 const Layout = ({
   children,
+  user,
 }: {
   children:
     | string
@@ -11,11 +12,12 @@ const Layout = ({
         unknown,
         string | React.JSXElementConstructor<unknown>
       >;
+  user: { email: string } | null;
 }) => {
   return (
-    <div className="flex flex-col justify-between h-full">
-      <Header />
-      {children}
+    <div className="flex flex-col min-h-screen">
+      <Header user={user} />
+      <main className="flex-grow">{children}</main>
       <Footer />
     </div>
   );

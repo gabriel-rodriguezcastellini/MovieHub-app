@@ -32,38 +32,35 @@ function App() {
   }, []);
 
   return (
-    <>
-      {user && <div>Welcome, {user.displayName}</div>}
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/movies/:id" element={<Movie />} />
-            <Route
-              path="/manage"
-              element={
-                <ProtectedRoute user={user}>
-                  <Manage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/manage/movies"
-              element={
-                <ProtectedRoute user={user}>
-                  <ManageMovies />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/not-found" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Layout user={user}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/movies/:id" element={<Movie />} />
+          <Route
+            path="/manage"
+            element={
+              <ProtectedRoute user={user}>
+                <Manage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage/movies"
+            element={
+              <ProtectedRoute user={user}>
+                <ManageMovies />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/not-found" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
 }
 
