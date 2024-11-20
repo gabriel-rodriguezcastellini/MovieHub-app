@@ -1,13 +1,17 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 import { auth } from "../../config/firebase";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { signUpSchema } from "./validations";
 import { SignUpFormValues } from "../../types/forms";
+import Spinner from "../../components/Spinner";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -18,11 +22,15 @@ const SignUp = () => {
   });
 
   const handleSignUp = handleSubmit(async (data) => {
+    setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       navigate("/");
     } catch (error) {
+      setError("Failed to sign up. Please try again.");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -74,11 +82,20 @@ const SignUp = () => {
               </p>
             )}
           </div>
+          {error && <p className="text-red-600 font-bold mb-4">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg font-bold hover:bg-blue-600 transition duration-300"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg font-bold hover:bg-blue-600 transition duration-300 disabled:opacity-50"
+            disabled={loading}
           >
-            Sign Up
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <Spinner />
+                Signing Up...
+              </div>
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
       </div>
