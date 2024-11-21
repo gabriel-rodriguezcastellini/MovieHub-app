@@ -5,10 +5,6 @@ interface HeaderList {
 
 export const headerList: HeaderList[] = [
   {
-    title: "Home",
-    link: "/",
-  },
-  {
     title: "About",
     link: "/about",
   },
@@ -23,10 +19,6 @@ export const headerList: HeaderList[] = [
 ];
 
 export const tokenList: HeaderList[] = [
-  {
-    title: "Home",
-    link: "/",
-  },
   {
     title: "About",
     link: "/about",

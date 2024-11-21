@@ -1,5 +1,7 @@
 import Footer from "../Footer";
 import Header from "../Header";
+import ScrollToTop from "../../hooks/ScrollToTop";
+import ScrollToTopButton from "../ScrollToTopButton";
 
 const Layout = ({
   children,
@@ -17,8 +19,10 @@ const Layout = ({
   return (
     <div className="flex flex-col min-h-screen">
       <Header user={user} />
-      <main className="flex-grow">{children}</main>
+      <ScrollToTop />
+      <main className="flex-grow pt-16">{children}</main>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 };

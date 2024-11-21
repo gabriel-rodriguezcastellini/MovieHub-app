@@ -17,7 +17,7 @@ const Header = ({ user }: { user: { email: string } | null }) => {
   const token = localStorage.getItem("token");
 
   return (
-    <header className="bg-gray-800 text-white p-4 shadow-md">
+    <header className="fixed top-0 left-0 right-0 bg-gray-800 text-white p-4 shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center">
         <h1
           className="text-2xl font-bold cursor-pointer"
