@@ -26,9 +26,8 @@ const LogIn = () => {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       navigate("/");
-    } catch (error) {
+    } catch {
       setError("Invalid email or password");
-      console.error(error);
     } finally {
       setLoading(false);
     }

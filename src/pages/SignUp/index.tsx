@@ -26,9 +26,8 @@ const SignUp = () => {
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       navigate("/");
-    } catch (error) {
+    } catch {
       setError("Failed to sign up. Please try again.");
-      console.error(error);
     } finally {
       setLoading(false);
     }

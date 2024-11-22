@@ -12,7 +12,6 @@ const getUserToken = async () => {
         const token = await getIdToken(user);
         resolve(token);
       } else {
-        console.log("User not logged in");
         resolve(null);
       }
       unsub();
