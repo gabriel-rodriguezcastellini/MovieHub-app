@@ -1,4 +1,4 @@
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
 
 const api = axios.create({
@@ -31,14 +31,12 @@ const refreshToken = async () => {
 };
 
 api.interceptors.request.use(
-  (request: InternalAxiosRequestConfig) => {
-    const token = getUserToken();
+  async (request) => {
+    const token = await getUserToken();
     if (token) {
-      if (!request.headers) {
-        request.headers = {} as InternalAxiosRequestConfig["headers"];
-      }
       request.headers["Authorization"] = `Bearer ${token}`;
     }
+
     return request;
   },
   (error) => Promise.reject(error)
@@ -59,7 +57,7 @@ api.interceptors.response.use(
       const newToken = await refreshToken();
 
       if (newToken) {
-        api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+        api.defaults.headers["Authorization"] = `Bearer ${newToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return api(originalRequest);
       }

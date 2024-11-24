@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../config/axios";
 import { Movie } from "../types/movies";
 
 interface MoviesState {
@@ -11,7 +11,7 @@ interface MoviesState {
 
 export const getMovies = createAsyncThunk("movies/getMovies", async () => {
   const response = await axios.get(
-    `${import.meta.env.VITE_API_BASE_URL}/movies`
+    `${import.meta.env.VITE_API_BASE_URL}/movies/visible`
   );
   return response.data;
 });
