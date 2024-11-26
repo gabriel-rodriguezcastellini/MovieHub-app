@@ -12,9 +12,11 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Manage from "./pages/Manage";
 import ManageMovies from "./pages/Manage/Movies";
+import Loading from "./components/Loading";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -23,42 +25,47 @@ function App() {
           ?.getIdToken()
           .then((token) => localStorage.setItem("token", token));
         setUser(user);
-        return;
+      } else {
+        setUser(null);
+        localStorage.removeItem("token");
       }
-      setUser(null);
-      localStorage.removeItem("token");
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
   return (
     <BrowserRouter>
-      <Layout user={user}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/movies/:id" element={<Movie />} />
-          <Route
-            path="/manage"
-            element={
-              <ProtectedRoute user={user}>
-                <Manage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manage/movies"
-            element={
-              <ProtectedRoute user={user}>
-                <ManageMovies />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/not-found" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+      <Layout user={user ? { email: user.email ?? "" } : null}>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/movies/:id" element={<Movie />} />
+            <Route
+              path="/manage"
+              element={
+                <ProtectedRoute user={user}>
+                  <Manage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage/movies"
+              element={
+                <ProtectedRoute user={user}>
+                  <ManageMovies />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/not-found" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        )}
       </Layout>
     </BrowserRouter>
   );

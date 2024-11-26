@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "../../store/store";
-import { getMovies } from "../../slices/movies";
+import { getVisibleMovies } from "../../slices/movies";
 import Card from "../../components/Card";
 import { RootState } from "../../store/store";
 import Loading from "../../components/Loading";
@@ -9,13 +9,13 @@ import Error from "../../components/Error";
 const Home = () => {
   const dispatch = useDispatch();
   const {
-    list: movies,
+    visibleMovies: movies,
     loading,
     error,
   } = useSelector((state: RootState) => state.reducer.movies);
 
   useEffect(() => {
-    dispatch(getMovies());
+    dispatch(getVisibleMovies());
   }, [dispatch]);
 
   if (loading) {
