@@ -24,7 +24,13 @@ const LogIn = () => {
   const handleLogIn = handleSubmit(async (data) => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const token = await userCredential.user.getIdToken();
+      localStorage.setItem("token", token);
       navigate("/");
     } catch {
       setError("Invalid email or password");

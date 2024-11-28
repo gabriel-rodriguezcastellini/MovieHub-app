@@ -8,6 +8,7 @@ interface MoviesState {
   movie: Movie | null;
   loading: boolean;
   error: string | undefined;
+  updatingVisibility: boolean;
 }
 
 export const getVisibleMovies = createAsyncThunk(
@@ -48,12 +49,24 @@ export const updateMovieVisibility = createAsyncThunk(
   }
 );
 
+export const addMovie = createAsyncThunk(
+  "movies/addMovie",
+  async (movie: Movie) => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/movies`,
+      movie
+    );
+    return response.data;
+  }
+);
+
 const initialState: MoviesState = {
   visibleMovies: [],
   movies: [],
   movie: null,
   loading: false,
   error: undefined,
+  updatingVisibility: false,
 };
 
 const slice = createSlice({
@@ -111,14 +124,23 @@ const slice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(updateMovieVisibility.pending, (state) => {
-      state.loading = true;
+      state.updatingVisibility = true;
       state.error = initialState.error;
     });
     builder.addCase(updateMovieVisibility.fulfilled, (state) => {
-      state.loading = initialState.loading;
+      state.updatingVisibility = initialState.updatingVisibility;
     });
     builder.addCase(updateMovieVisibility.rejected, (state, action) => {
-      state.loading = initialState.loading;
+      state.updatingVisibility = initialState.updatingVisibility;
+      state.error = action.error.message;
+    });
+    builder.addCase(addMovie.pending, (state) => {
+      state.error = initialState.error;
+    });
+    builder.addCase(addMovie.fulfilled, (state) => {
+      state.error = initialState.error;
+    });
+    builder.addCase(addMovie.rejected, (state, action) => {
       state.error = action.error.message;
     });
   },

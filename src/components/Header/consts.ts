@@ -27,8 +27,4 @@ export const tokenList: HeaderList[] = [
     title: "Manage",
     link: "/manage",
   },
-  {
-    title: "Manage movies",
-    link: "/manage/movies",
-  },
 ];

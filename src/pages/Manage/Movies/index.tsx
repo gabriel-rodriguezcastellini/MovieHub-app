@@ -2,16 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store/store";
 import { getMovies, updateMovieVisibility } from "../../../slices/movies";
 import { RootState } from "../../../store/store";
-import Loading from "../../../components/Loading";
 import Spinner from "../../../components/Spinner";
-import Error from "../../../components/Error";
 import Modal from "../../../components/Modal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loading from "../../../components/Loading";
+import Error from "../../../components/Error";
+import { clearNotification } from "../../../slices/notifications";
 
 const ManageMovies: React.FC = () => {
   const dispatch = useDispatch();
-  const { movies, loading, error } = useSelector(
+  const navigate = useNavigate();
+  const { movies, loading } = useSelector(
     (state: RootState) => state.reducer.movies
+  );
+  const notification = useSelector(
+    (state: RootState) => state.reducer.notification.message
   );
   const [localMovies, setLocalMovies] = useState(movies);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,9 +26,19 @@ const ManageMovies: React.FC = () => {
     id: string;
     isVisible: boolean;
   } | null>(null);
-  const [updatingVisibility, setUpdatingVisibility] = useState<string | null>(
+  const [loadingVisibility, setLoadingVisibility] = useState<string | null>(
     null
   );
+
+  const allowedUrls = ["/manage/movies", "/manage/movies/add"];
+
+  const validateAndNavigate = (url: string) => {
+    if (allowedUrls.includes(url)) {
+      navigate(url);
+    } else {
+      console.error("Invalid URL redirection attempt:", url);
+    }
+  };
 
   useEffect(() => {
     dispatch(getMovies());
@@ -31,29 +48,42 @@ const ManageMovies: React.FC = () => {
     setLocalMovies(movies);
   }, [movies]);
 
+  useEffect(() => {
+    if (notification) {
+      toast.success(notification);
+      dispatch(clearNotification());
+    }
+  }, [notification, dispatch]);
+
   const handleToggleVisibility = async () => {
     if (selectedMovie) {
-      setUpdatingVisibility(selectedMovie.id);
+      setLoadingVisibility(selectedMovie.id);
       setIsModalOpen(false);
       try {
-        await dispatch(
+        const result = await dispatch(
           updateMovieVisibility({
             id: selectedMovie.id,
             isVisible: !selectedMovie.isVisible,
           })
         );
-        setLocalMovies((prevMovies) =>
-          prevMovies.map((movie) =>
-            movie._id === selectedMovie.id
-              ? { ...movie, isVisible: !selectedMovie.isVisible }
-              : movie
-          )
-        );
+        if (result.meta.requestStatus === "fulfilled") {
+          setLocalMovies((prevMovies) =>
+            prevMovies.map((movie) =>
+              movie._id === selectedMovie.id
+                ? { ...movie, isVisible: !selectedMovie.isVisible }
+                : movie
+            )
+          );
+          toast.success("Movie visibility updated successfully!");
+        } else {
+          throw new Error("Failed to update movie visibility");
+        }
       } catch (error) {
         console.error("Failed to update movie visibility", error);
+        toast.error("Failed to update movie visibility. Please try again.");
       } finally {
         setSelectedMovie(null);
-        setUpdatingVisibility(null);
+        setLoadingVisibility(null);
       }
     }
   };
@@ -63,17 +93,25 @@ const ManageMovies: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleAddMovie = () => {
+    validateAndNavigate("/manage/movies/add");
+  };
+
   if (loading) {
     return <Loading />;
   }
 
-  if (error) {
-    return <Error message={error} />;
-  }
-
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Manage Movies</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Manage Movies</h1>
+        <button
+          onClick={handleAddMovie}
+          className="bg-green-500 text-white py-2 px-4 rounded-lg font-bold hover:bg-green-600 transition duration-300"
+        >
+          Add Movie
+        </button>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {localMovies.map((movie) => (
           <div key={movie._id} className="bg-white p-4 rounded-lg shadow-lg">
@@ -102,12 +140,12 @@ const ManageMovies: React.FC = () => {
             <div className="flex justify-between">
               <button
                 onClick={() => openModal(movie._id, movie.isVisible)}
-                className={`bg-yellow-500 text-white py-2 px-4 rounded-lg font-bold hover:bg-yellow-600 transition duration-300 disabled:opacity-50 ${
-                  updatingVisibility === movie._id ? "cursor-not-allowed" : ""
+                className={`bg-yellow-500 text-white py-2 px-4 rounded-lg font-bold hover:bg-yellow-600 transition duration-300 ${
+                  loadingVisibility === movie._id ? "cursor-not-allowed" : ""
                 }`}
-                disabled={updatingVisibility === movie._id}
+                disabled={loadingVisibility === movie._id}
               >
-                {updatingVisibility === movie._id ? (
+                {loadingVisibility === movie._id ? (
                   <div className="flex items-center justify-center">
                     <Spinner />
                     Updating...
@@ -140,6 +178,7 @@ const ManageMovies: React.FC = () => {
           selectedMovie?.isVisible ? "make invisible" : "make visible"
         } this movie?`}
       />
+      <ToastContainer />
     </div>
   );
 };

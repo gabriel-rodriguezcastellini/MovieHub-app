@@ -8,7 +8,8 @@ const ProtectedRoute = ({
   children: JSX.Element;
   user: User | null;
 }) => {
-  return user ? children : <Navigate to="/login" />;
+  const token = localStorage.getItem("token");
+  return user || token ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

@@ -12,60 +12,64 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Manage from "./pages/Manage";
 import ManageMovies from "./pages/Manage/Movies";
-import Loading from "./components/Loading";
+import AddMovie from "./pages/Manage/Movies/AddMovie";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        auth.currentUser
-          ?.getIdToken()
-          .then((token) => localStorage.setItem("token", token));
-        setUser(user);
-      } else {
-        setUser(null);
-        localStorage.removeItem("token");
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    const token = localStorage.getItem("token");
+    if (token) {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user);
+        } else {
+          setUser(null);
+          localStorage.removeItem("token");
+        }
+      });
+    }
   }, []);
 
   return (
     <BrowserRouter>
       <Layout user={user ? { email: user.email ?? "" } : null}>
-        {loading ? (
-          <Loading />
-        ) : (
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/movies/:id" element={<Movie />} />
-            <Route
-              path="/manage"
-              element={
-                <ProtectedRoute user={user}>
-                  <Manage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/manage/movies"
-              element={
-                <ProtectedRoute user={user}>
-                  <ManageMovies />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/not-found" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        )}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/movies/:id" element={<Movie />} />
+          <Route
+            path="/manage"
+            element={
+              <ProtectedRoute user={user}>
+                <Manage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage/movies"
+            element={
+              <ProtectedRoute user={user}>
+                <ManageMovies />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage/movies/add"
+            element={
+              <ProtectedRoute user={user}>
+                <AddMovie />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/not-found" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+        <ToastContainer />
       </Layout>
     </BrowserRouter>
   );
