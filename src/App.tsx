@@ -13,8 +13,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Manage from "./pages/Manage";
 import ManageMovies from "./pages/Manage/Movies";
 import AddMovie from "./pages/Manage/Movies/AddMovie";
-import { ToastContainer } from "react-toastify";
+import EditMovie from "./pages/Manage/Movies/EditMovie";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -63,6 +64,14 @@ function App() {
             element={
               <ProtectedRoute user={user}>
                 <AddMovie />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage/movies/edit/:id"
+            element={
+              <ProtectedRoute user={user}>
+                <EditMovie />
               </ProtectedRoute>
             }
           />

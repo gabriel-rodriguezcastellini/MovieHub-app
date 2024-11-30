@@ -5,10 +5,9 @@ import { RootState } from "../../../store/store";
 import Spinner from "../../../components/Spinner";
 import Modal from "../../../components/Modal";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "../../../components/Loading";
-import Error from "../../../components/Error";
 import { clearNotification } from "../../../slices/notifications";
 
 const ManageMovies: React.FC = () => {
@@ -76,7 +75,7 @@ const ManageMovies: React.FC = () => {
           );
           toast.success("Movie visibility updated successfully!");
         } else {
-          throw new Error("Failed to update movie visibility");
+          throw new Error("Failed to update movie visibility.");
         }
       } catch (error) {
         console.error("Failed to update movie visibility", error);
@@ -178,7 +177,6 @@ const ManageMovies: React.FC = () => {
           selectedMovie?.isVisible ? "make invisible" : "make visible"
         } this movie?`}
       />
-      <ToastContainer />
     </div>
   );
 };

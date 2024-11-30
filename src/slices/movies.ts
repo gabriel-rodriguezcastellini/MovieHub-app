@@ -51,12 +51,44 @@ export const updateMovieVisibility = createAsyncThunk(
 
 export const addMovie = createAsyncThunk(
   "movies/addMovie",
-  async (movie: Movie) => {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/movies`,
-      movie
-    );
-    return response.data;
+  async (movie: Movie, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/movies`,
+        movie
+      );
+      return response.data;
+    } catch (error: unknown) {
+      console.error("Error adding movie:", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMovie = createAsyncThunk(
+  "movies/updateMovie",
+  async (
+    {
+      id,
+      ...data
+    }: {
+      id: string;
+      title: string;
+      description: string;
+      imageUrl: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/movies/${id}`,
+        data
+      );
+      return response.data;
+    } catch (error: unknown) {
+      console.error("Error updating movie:", error);
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
@@ -141,6 +173,15 @@ const slice = createSlice({
       state.error = initialState.error;
     });
     builder.addCase(addMovie.rejected, (state, action) => {
+      state.error = action.error.message;
+    });
+    builder.addCase(updateMovie.pending, (state) => {
+      state.error = initialState.error;
+    });
+    builder.addCase(updateMovie.fulfilled, (state) => {
+      state.error = initialState.error;
+    });
+    builder.addCase(updateMovie.rejected, (state, action) => {
       state.error = action.error.message;
     });
   },
