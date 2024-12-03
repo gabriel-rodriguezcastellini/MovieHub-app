@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
 import { movieSchema } from "../../validations/movieSchema";
 import Spinner from "../Spinner";
 import { Movie } from "../../types/movies";
+import { toast } from "react-toastify";
 
 interface MovieFormProps {
   initialValues?: Movie;
-  onSubmit: (data: Movie) => Promise<void>;
+  onSubmit: (data: Movie) => void;
   isLoading: boolean;
   buttonText: string;
 }
@@ -33,8 +35,26 @@ const MovieForm: React.FC<MovieFormProps> = ({
       setValue("title", initialValues.title);
       setValue("description", initialValues.description);
       setValue("imageUrl", initialValues.imageUrl);
+      setValue("isVisible", initialValues.isVisible);
     }
   }, [initialValues, setValue]);
+
+  const handleFormSubmit = async (data: Movie) => {
+    try {
+      await movieSchema.validateAsync(data, { abortEarly: false });
+      onSubmit(data);
+    } catch (error: unknown) {
+      if ((error as Joi.ValidationError).isJoi) {
+        (error as Joi.ValidationError).details.forEach(
+          (detail: { message: string }) => {
+            toast.error(detail.message);
+          }
+        );
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -42,7 +62,7 @@ const MovieForm: React.FC<MovieFormProps> = ({
         <h1 className="text-3xl font-bold mb-6 text-center">
           {buttonText} Movie
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">Title</label>
             <input
@@ -84,6 +104,17 @@ const MovieForm: React.FC<MovieFormProps> = ({
                 {errors.imageUrl.message}
               </p>
             )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              Visibility
+            </label>
+            <input
+              type="checkbox"
+              {...register("isVisible")}
+              className="mr-2 leading-tight"
+            />
+            <span className="text-gray-700">Visible</span>
           </div>
           <button
             type="submit"

@@ -12,55 +12,40 @@ const EditMovie: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const { movie } = useSelector((state: RootState) => state.reducer.movies);
-  const timeout = 3000;
 
   useEffect(() => {
     if (id) {
       dispatch(getMovie(id));
     }
+
+    return () => {
+      dispatch({ type: "movies/resetMovie" });
+    };
   }, [dispatch, id]);
 
   const handleUpdateMovie = async (data: Movie) => {
     setLoading(true);
     try {
-      const result = await dispatch(updateMovie({ id: id!, ...data }));
+      const result = await dispatch(updateMovie({ id: id!, data }));
       if (result.meta.requestStatus === "fulfilled") {
-        toast.success("Movie updated successfully!", { autoClose: timeout });
-        setIsRedirecting(true);
-        setTimeout(() => {
-          navigate("/manage/movies");
-        }, timeout);
+        toast.success("Movie updated successfully!");
+        navigate("/manage/movies");
       } else {
-        const errorMessage =
-          result.payload?.message || "Failed to update movie";
-        throw new Error(errorMessage);
+        toast.error(result.payload);
       }
-    } catch (error: unknown) {
-      console.error("Failed to update movie", error);
-      toast.error(
-        error.message || "Failed to update movie. Please try again.",
-        {
-          autoClose: timeout,
-        }
-      );
+    } catch {
+      toast.error("Failed to update movie. Please try again.");
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, timeout);
-
-      if (!isRedirecting) {
-        setIsRedirecting(false);
-      }
+      setLoading(false);
     }
   };
 
   return (
     <MovieForm
-      initialValues={movie}
+      initialValues={movie ?? undefined}
       onSubmit={handleUpdateMovie}
-      isLoading={loading || isRedirecting}
+      isLoading={loading}
       buttonText="Update"
     />
   );

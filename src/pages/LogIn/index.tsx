@@ -31,7 +31,7 @@ const LogIn = () => {
       );
       const token = await userCredential.user.getIdToken();
       localStorage.setItem("token", token);
-      navigate("/");
+      navigate("/manage");
     } catch {
       setError("Invalid email or password");
     } finally {

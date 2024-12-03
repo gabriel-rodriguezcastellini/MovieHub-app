@@ -11,4 +11,7 @@ export const movieSchema = Joi.object({
     "string.empty": "Image URL is required",
     "string.uri": "Invalid URL",
   }),
+  isVisible: Joi.boolean().required().messages({
+    "boolean.base": "Visibility must be a boolean",
+  }),
 });

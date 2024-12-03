@@ -7,13 +7,7 @@ const Layout = ({
   children,
   user,
 }: {
-  children:
-    | string
-    | number
-    | React.ReactElement<
-        unknown,
-        string | React.JSXElementConstructor<unknown>
-      >;
+  children: React.ReactNode;
   user: { email: string } | null;
 }) => {
   return (

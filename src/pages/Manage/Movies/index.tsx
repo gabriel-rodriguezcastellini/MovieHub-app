@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store/store";
-import { getMovies, updateMovieVisibility } from "../../../slices/movies";
+import {
+  getMovies,
+  updateMovieVisibility,
+  deleteMovie,
+} from "../../../slices/movies";
 import { RootState } from "../../../store/store";
 import Spinner from "../../../components/Spinner";
 import Modal from "../../../components/Modal";
@@ -28,14 +32,14 @@ const ManageMovies: React.FC = () => {
   const [loadingVisibility, setLoadingVisibility] = useState<string | null>(
     null
   );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [movieToDelete, setMovieToDelete] = useState<string | null>(null);
 
   const allowedUrls = ["/manage/movies", "/manage/movies/add"];
 
   const validateAndNavigate = (url: string) => {
     if (allowedUrls.includes(url)) {
       navigate(url);
-    } else {
-      console.error("Invalid URL redirection attempt:", url);
     }
   };
 
@@ -77,8 +81,7 @@ const ManageMovies: React.FC = () => {
         } else {
           throw new Error("Failed to update movie visibility.");
         }
-      } catch (error) {
-        console.error("Failed to update movie visibility", error);
+      } catch {
         toast.error("Failed to update movie visibility. Please try again.");
       } finally {
         setSelectedMovie(null);
@@ -87,9 +90,30 @@ const ManageMovies: React.FC = () => {
     }
   };
 
+  const handleDeleteMovie = async () => {
+    if (movieToDelete) {
+      try {
+        await dispatch(deleteMovie(movieToDelete));
+        setLocalMovies((prevMovies) =>
+          prevMovies.filter((movie) => movie._id !== movieToDelete)
+        );
+        toast.success("Movie deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setMovieToDelete(null);
+      } catch {
+        toast.error("Failed to delete movie. Please try again.");
+      }
+    }
+  };
+
   const openModal = (id: string, isVisible: boolean) => {
     setSelectedMovie({ id, isVisible });
     setIsModalOpen(true);
+  };
+
+  const openDeleteModal = (id: string) => {
+    setMovieToDelete(id);
+    setIsDeleteModalOpen(true);
   };
 
   const handleAddMovie = () => {
@@ -161,7 +185,10 @@ const ManageMovies: React.FC = () => {
               >
                 Edit
               </Link>
-              <button className="bg-red-500 text-white py-2 px-4 rounded-lg">
+              <button
+                onClick={() => openDeleteModal(movie._id)}
+                className="bg-red-500 text-white py-2 px-4 rounded-lg"
+              >
                 Delete
               </button>
             </div>
@@ -176,6 +203,13 @@ const ManageMovies: React.FC = () => {
         message={`Are you sure you want to ${
           selectedMovie?.isVisible ? "make invisible" : "make visible"
         } this movie?`}
+      />
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteMovie}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this movie? This action cannot be undone."
       />
     </div>
   );
